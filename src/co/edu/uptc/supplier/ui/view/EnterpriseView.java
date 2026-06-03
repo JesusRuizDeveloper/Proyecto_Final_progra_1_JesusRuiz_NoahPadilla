@@ -1,0 +1,170 @@
+package co.edu.uptc.supplier.ui.view;
+
+import java.util.List;
+import java.util.Scanner;
+
+import co.edu.uptc.supplier.domain.Enterprise;
+import co.edu.uptc.supplier.dto.ResultDTO;
+import co.edu.uptc.supplier.ui.controller.EnterpriseController;
+
+/**
+ * Vista de administración de la entidad {@link Enterprise}. Gestiona la
+ * interacción por consola y delega la lógica en el {@link EnterpriseController}.
+ *
+ * @author Jesús Ruiz y Noah Padilla
+ * @version 1.0
+ */
+public class EnterpriseView {
+
+    /** Lector de entrada estándar. */
+    private Scanner scanner;
+
+    /** Controlador de empresas. */
+    private EnterpriseController controller;
+
+    /**
+     * Constructor por defecto. Inicializa el lector y el controlador.
+     */
+    public EnterpriseView() {
+        this.scanner = new Scanner(System.in);
+        this.controller = new EnterpriseController();
+    }
+
+    /**
+     * Muestra el menú de operaciones CRUD para empresas y procesa la opción
+     * elegida hasta que el usuario decida volver.
+     */
+    public void menu() {
+        int option = -1;
+        do {
+            StringBuilder menu = new StringBuilder();
+            menu.append("\n----- MENÚ DE EMPRESAS -----");
+            menu.append("\n[1]. Crear empresa");
+            menu.append("\n[2]. Mostrar todas las empresas");
+            menu.append("\n[3]. Buscar empresa por id");
+            menu.append("\n[4]. Actualizar empresa");
+            menu.append("\n[5]. Eliminar empresa");
+            menu.append("\n[0]. Volver");
+            menu.append("\nSeleccione una opción: ");
+            System.out.println(menu.toString());
+
+            String strOption = scanner.nextLine();
+            if (!strOption.matches("^\\d$")) {
+                System.out.println("Opción incorrecta.");
+                continue;
+            }
+            option = Integer.parseInt(strOption);
+            switch (option) {
+                case 1 -> create();
+                case 2 -> listAll();
+                case 3 -> findById();
+                case 4 -> update();
+                case 5 -> delete();
+                case 0 -> System.out.println("Volviendo al menú principal...");
+                default -> System.out.println("Opción incorrecta.");
+            }
+        } while (option != 0);
+    }
+
+    /**
+     * Solicita los datos de una empresa y solicita su creación al controlador.
+     */
+    private void create() {
+        System.out.println("* Id (numérico): ");
+        String id = scanner.nextLine();
+        System.out.println("* Nombre (solo letras): ");
+        String name = scanner.nextLine();
+        System.out.println("* Dirección: ");
+        String addres = scanner.nextLine();
+        System.out.println("* Número de pedidos (numérico): ");
+        String numberOrders = scanner.nextLine();
+
+        ResultDTO<Enterprise> result = controller.addEnterprise(id, name, addres, numberOrders);
+        printResult(result);
+    }
+
+    /**
+     * Muestra todas las empresas registradas.
+     */
+    private void listAll() {
+        List<Enterprise> enterprises = controller.listEnterprises();
+        System.out.println("\nLista de empresas:");
+        if (enterprises.isEmpty()) {
+            System.out.println("No hay registros.");
+            return;
+        }
+        enterprises.forEach(System.out::println);
+    }
+
+    /**
+     * Solicita un id y muestra la empresa correspondiente, si existe.
+     */
+    private void findById() {
+        System.out.println("* Id de la empresa a buscar: ");
+        String id = scanner.nextLine();
+        ResultDTO<Enterprise> result = controller.findById(id);
+        if (!result.isSuccessful()) {
+            printErrors(result);
+            return;
+        }
+        System.out.println(result.getData() != null
+                ? result.getData() : "La empresa no fue encontrada.");
+    }
+
+    /**
+     * Solicita un id, muestra los valores actuales y permite actualizarlos.
+     */
+    private void update() {
+        System.out.println("* Id de la empresa a actualizar: ");
+        String id = scanner.nextLine();
+        ResultDTO<Enterprise> found = controller.findById(id);
+        if (!found.isSuccessful()) {
+            printErrors(found);
+            return;
+        }
+        Enterprise current = found.getData();
+        System.out.println("Nombre (" + current.getName() + ") [enter para conservar]: ");
+        String name = scanner.nextLine();
+        System.out.println("Dirección (" + current.getAddres() + ") [enter para conservar]: ");
+        String addres = scanner.nextLine();
+        System.out.println("Número de pedidos (" + current.getNumberOrders()
+                + ") [enter para conservar]: ");
+        String numberOrders = scanner.nextLine();
+
+        ResultDTO<Enterprise> result = controller.updateEnterprise(id, name, addres, numberOrders);
+        printResult(result);
+    }
+
+    /**
+     * Solicita un id y solicita la eliminación de la empresa correspondiente.
+     */
+    private void delete() {
+        System.out.println("* Id de la empresa a eliminar: ");
+        String id = scanner.nextLine();
+        ResultDTO<Enterprise> result = controller.deleteEnterprise(id);
+        printResult(result);
+    }
+
+    /**
+     * Imprime el resultado de una operación: el mensaje de éxito o los errores.
+     *
+     * @param result resultado de la operación
+     */
+    private void printResult(ResultDTO<Enterprise> result) {
+        if (result.isSuccessful()) {
+            System.out.println(result.getMessage());
+        } else {
+            printErrors(result);
+        }
+    }
+
+    /**
+     * Imprime la lista de errores de validación de un resultado.
+     *
+     * @param result resultado con los errores a mostrar
+     */
+    private void printErrors(ResultDTO<Enterprise> result) {
+        System.out.println("La operación no se completó por:");
+        result.getListMessageError().forEach(System.out::println);
+    }
+}

@@ -1,0 +1,15 @@
+# Salida de compilación
+/bin/
+/bin-test/
+
+# Archivos temporales de compilación manual
+sources.txt
+testsources.txt
+
+# Configuración de IDE adicional
+.metadata/
+*.tmp
+
+# Sistema operativo
+Thumbs.db
+.DS_Store

@@ -1,0 +1,8 @@
+co.edu.uptc.supplier.domain
+co.edu.uptc.supplier.dto
+co.edu.uptc.supplier.enums
+co.edu.uptc.supplier.repository
+co.edu.uptc.supplier.service
+co.edu.uptc.supplier.ui
+co.edu.uptc.supplier.ui.controller
+co.edu.uptc.supplier.ui.view

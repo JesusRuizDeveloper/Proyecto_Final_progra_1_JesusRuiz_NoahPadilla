@@ -25,13 +25,15 @@ public class MainView {
     private OrderView orderView;
 
     /**
-     * Constructor por defecto. Inicializa el lector y las vistas hijas.
+     * Constructor por defecto. Crea un único {@link Scanner} sobre la entrada
+     * estándar y lo comparte con todas las vistas hijas, evitando problemas de
+     * lectura por tener varios lectores sobre {@code System.in}.
      */
     public MainView() {
         this.sc = new Scanner(System.in);
-        this.supplierView = new SupplierView();
-        this.enterpriseView = new EnterpriseView();
-        this.orderView = new OrderView();
+        this.supplierView = new SupplierView(sc);
+        this.enterpriseView = new EnterpriseView(sc);
+        this.orderView = new OrderView(sc);
     }
 
     /**

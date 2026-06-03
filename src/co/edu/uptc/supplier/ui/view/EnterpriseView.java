@@ -23,10 +23,13 @@ public class EnterpriseView {
     private EnterpriseController controller;
 
     /**
-     * Constructor por defecto. Inicializa el lector y el controlador.
+     * Crea la vista reutilizando el {@link Scanner} compartido por la
+     * aplicación e inicializa el controlador.
+     *
+     * @param scanner lector de entrada estándar compartido
      */
-    public EnterpriseView() {
-        this.scanner = new Scanner(System.in);
+    public EnterpriseView(Scanner scanner) {
+        this.scanner = scanner;
         this.controller = new EnterpriseController();
     }
 

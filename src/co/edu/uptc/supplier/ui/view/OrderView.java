@@ -24,10 +24,13 @@ public class OrderView {
     private OrderController controller;
 
     /**
-     * Constructor por defecto. Inicializa el lector y el controlador.
+     * Crea la vista reutilizando el {@link Scanner} compartido por la
+     * aplicación e inicializa el controlador.
+     *
+     * @param scanner lector de entrada estándar compartido
      */
-    public OrderView() {
-        this.scanner = new Scanner(System.in);
+    public OrderView(Scanner scanner) {
+        this.scanner = scanner;
         this.controller = new OrderController();
     }
 
